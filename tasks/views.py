@@ -1,9 +1,12 @@
 from django.db.models import F
 from django.db.models import Q
-from django.shortcuts import render
-from django.views.generic import ListView, DetailView
+from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse_lazy
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .models import Task, Photo
+from .forms import TaskForm
 
 # Create your views here.
 
@@ -54,3 +57,19 @@ class TaskDetailView(DetailView):
     template_name = 'tasks/task_detail.html'
     context_object_name = 'task'
 
+class TaskCreateView(LoginRequiredMixin, CreateView):
+    model = Task
+    template_name = 'tasks/task_form.html'
+    form_class = TaskForm
+    success_url = reverse_lazy('task_list')
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+
+class TaskUpdateView(UpdateView):
+    model = Task
+    template_name = 'tasks/task_form.html'
+    form_class = TaskForm
+    success_url = reverse_lazy('task_list')
