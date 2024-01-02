@@ -1,7 +1,7 @@
 from django.db.models import F
 from django.db.models import Q
 from django.shortcuts import render
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 
 from .models import Task, Photo
 
@@ -48,3 +48,9 @@ class TaskListView(ListView):
             queryset = queryset.filter(is_complete=False)
 
         return queryset
+
+class TaskDetailView(DetailView):
+    model = Task
+    template_name = 'tasks/task_detail.html'
+    context_object_name = 'task'
+
